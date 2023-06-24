@@ -35,10 +35,17 @@
 import type { User } from "firebase/auth";
 
 import { logOut } from "@/shared/services/authService";
+import { useRouter } from "vue-router";
 
 defineProps<{
   user: User;
 }>();
 
-const signOut = () => logOut();
+const router = useRouter();
+
+const signOut = () => {
+  logOut().then(() => {
+    router.push("/");
+  });
+};
 </script>

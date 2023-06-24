@@ -6,13 +6,9 @@
 <style scoped lang="scss"></style>
 
 <script setup lang="ts">
-import { useRouter } from "vue-router";
 import { useCurrentUser } from "vuefire";
 
-const router = useRouter();
+import firebaseApp from "./shared/firebase.config";
 
-const user = useCurrentUser();
-console.log(user.value);
-
-user.value && router.push('/dashboard')
+const user = useCurrentUser(firebaseApp.name);
 </script>

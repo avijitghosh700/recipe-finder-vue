@@ -40,7 +40,7 @@ app.use(VueFire, {
 
 app.use(Vue3Toastify, {
   autoClose: 1500,
-  position: 'top-center'
+  position: "top-center",
 } as ToastContainerOptions);
 
 app.mount("#app");

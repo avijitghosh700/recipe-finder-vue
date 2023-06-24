@@ -19,6 +19,10 @@ body {
   color: $secondary !important;
 }
 
+.text-theme-primary-light {
+  color: $theme-primary-light !important;
+}
+
 .btn {
   display: flex;
   align-items: center;
@@ -46,6 +50,15 @@ body {
     }
   }
 
+  &__primary-light {
+    background-color: $theme-primary-light;
+    color: $primary;
+
+    &:hover {
+      background-color: darken($theme-primary-light, 5%);
+    }
+  }
+
   &__secondary {
     background-color: $secondary;
     color: #fff;
@@ -63,6 +76,15 @@ body {
 
     &:hover {
       background-color: darken($secondary, 10%);
+    }
+  }
+
+  &__secondary-light {
+    background-color: $theme-secondary-light;
+    color: $secondary;
+
+    &:hover {
+      background-color: darken($theme-secondary-light, 5%);
     }
   }
 
