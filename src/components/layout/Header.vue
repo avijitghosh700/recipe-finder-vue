@@ -19,9 +19,9 @@
         <Logo />
 
         <ul class="header__menu flex items-center gap-2 ml-auto">
-          <li>Avijit Ghosh</li>
+          <li>{{ user.displayName || user.email }}</li>
           <li>
-            <button class="rounded-full p-3 flex items-center">
+            <button class="rounded-full p-3 flex items-center" @click="signOut">
               <vue-feather type="log-out"></vue-feather>
             </button>
           </li>
@@ -31,4 +31,14 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type { User } from "firebase/auth";
+
+import { logOut } from "@/shared/services/authService";
+
+defineProps<{
+  user: User;
+}>();
+
+const signOut = () => logOut();
+</script>

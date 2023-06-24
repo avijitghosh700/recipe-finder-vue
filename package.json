@@ -25,6 +25,7 @@
     "vue": "^3.3.4",
     "vue-feather": "^2.0.0",
     "vue-router": "^4.2.2",
+    "vue3-toastify": "^0.1.11",
     "vuefire": "^3.1.0",
     "vuesax": "^4.0.1-alpha.25"
   },

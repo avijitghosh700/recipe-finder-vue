@@ -14,10 +14,7 @@
 <template>
   <main class="main login">
     <section class="login__section grid place-items-center h-full px-3">
-      <form
-        class="login__form credential p-5 rounded border"
-        @submit.prevent="signIn"
-      >
+      <form class="login__form credential p-5 rounded border" @submit.prevent="logIn">
         <div class="login__formHeader text-center mb-5">
           <Logo size="xl" :symbolOnly="true" />
           <h2 class="text-center text-3xl text-theme-primary">Signin</h2>
@@ -50,11 +47,7 @@
               v-model="v$.password.$model"
             />
 
-            <button
-              type="button"
-              class="passwordToggleBtn"
-              @click="togglePasswordVisibility()"
-            >
+            <button type="button" class="passwordToggleBtn" @click="togglePasswordVisibility()">
               <vue-feather
                 :type="passwordViewToggle ? 'eye-off' : 'eye'"
                 :class="{ 'text-red-600': v$.password.$error }"
@@ -66,9 +59,7 @@
           <ErrorMessage :errors="v$.password.$errors" />
         </div>
 
-        <div
-          class="login__formBtnGrp flex flex-wrap md:flex-nowrap md:justify-between gap-3"
-        >
+        <div class="login__formBtnGrp flex flex-wrap md:flex-nowrap md:justify-between gap-3">
           <button
             type="button"
             class="btn btn__primary outlined large rounded px-4 w-full order-1 md:w-auto md:order-0"
@@ -80,7 +71,8 @@
             type="submit"
             class="btn btn__primary large rounded px-4 w-full order-0 md:w-auto md:order-1"
           >
-            Sign In
+            <template v-if="!loading">Sign In</template>
+            <vue-feather v-if="loading" type="loader" animation="spin"></vue-feather>
           </button>
         </div>
       </form>
@@ -95,9 +87,15 @@ import { useRouter } from "vue-router";
 import { useVuelidate } from "@vuelidate/core";
 import { required, email, minLength, helpers } from "@vuelidate/validators";
 
+import { toast } from "vue3-toastify";
+
+import { signIn } from "@/shared/services/authService";
+
 const router = useRouter();
 
 const passwordViewToggle = ref(false);
+const loading = ref(false);
+const errorMsg = ref("");
 
 const signInForm = reactive({
   email: "",
@@ -122,7 +120,40 @@ const goToSignup = () => router.push("/register");
 const togglePasswordVisibility = (): boolean =>
   (passwordViewToggle.value = !passwordViewToggle.value);
 
-const signIn = () => {
-  console.log(signInForm);
+const logIn = async () => {
+  const isInvalid = v$.value.$invalid;
+
+  if (isInvalid) return;
+
+  loading.value = true;
+
+  try {
+    const response = await signIn(signInForm.email, signInForm.password);
+    const user = response.user;
+    console.log(user);
+
+    loading.value = false;
+    
+    router.push("/dashboard");
+  } catch (error: any) {
+    switch (error.code) {
+      case "auth/invalid-email":
+        errorMsg.value = "Invalid email";
+        break;
+      case "auth/user-not-found":
+        errorMsg.value = "No account with that email was found";
+        break;
+      case "auth/wrong-password":
+        errorMsg.value = "Incorrect password";
+        break;
+      default:
+        errorMsg.value = "Email or password was incorrect";
+        break;
+    }
+
+    toast(errorMsg.value, { type: "error" });
+
+    loading.value = false;
+  }
 };
 </script>
