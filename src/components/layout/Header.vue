@@ -19,7 +19,12 @@
         <Logo />
 
         <ul class="header__menu flex items-center gap-2 ml-auto">
-          <li>{{ user.name || user.email }}</li>
+          <li>
+            <div class="header__userInfo flex items-center gap-[5px]">
+              <Avatar :user="user" />
+              {{ user.name || user.email }}
+            </div>
+          </li>
           <li>
             <button class="rounded-full p-3 flex items-center" @click="signOut">
               <vue-feather type="log-out"></vue-feather>

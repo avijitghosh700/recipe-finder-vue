@@ -6,6 +6,9 @@ import type { User as UserModel, AuthState } from "@/shared/models/user.mode";
 
 export const useAuthStore = defineStore("auth", {
   state: () => {
+    if (localStorage.getItem("auth"))
+      return JSON.parse(<string>localStorage.getItem("auth"));
+
     return {
       user: null,
       isAuthenticated: false,
@@ -40,6 +43,8 @@ export const useAuthStore = defineStore("auth", {
         avatar: user.photoURL || "",
         email: user.email || "",
       };
+
+      this.user.token && this.setAuthenticated();
     },
 
     setLoading(isLoading: boolean) {
