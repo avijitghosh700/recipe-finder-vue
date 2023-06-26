@@ -5,13 +5,14 @@ import { type User } from "firebase/auth";
 import type { User as UserModel, AuthState } from "@/shared/models/user.mode";
 
 export const useAuthStore = defineStore("auth", {
-  state: () =>
-  ({
-    user: null,
-    isAuthenticated: false,
-    isLoading: false,
-    isOAuthLoading: false,
-  } as AuthState),
+  state: () => {
+    return {
+      user: null,
+      isAuthenticated: false,
+      isLoading: false,
+      isOAuthLoading: false,
+    } as AuthState;
+  },
 
   getters: {
     getState: (state: AuthState) => state,

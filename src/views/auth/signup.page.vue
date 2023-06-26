@@ -14,7 +14,10 @@
 <template>
   <main class="main signup">
     <section class="signup__section grid place-items-center h-full px-3">
-      <form class="signup__form credential p-5 rounded border" @submit.prevent="registerWithEmail">
+      <form
+        class="signup__form credential p-5 rounded border"
+        @submit.prevent="registerWithEmail"
+      >
         <div class="signup__formMain">
           <div class="signup__formHeader text-center mb-5">
             <Logo size="xl" :symbolOnly="true" />
@@ -36,7 +39,9 @@
           </div>
 
           <div class="form-group mb-3">
-            <label for="password" class="credential__label mb-1"> Password </label>
+            <label for="password" class="credential__label mb-1">
+              Password
+            </label>
 
             <div class="credential__passwordWithToggler">
               <input
@@ -48,7 +53,11 @@
                 v-model="v$.password.$model"
               />
 
-              <button type="button" class="passwordToggleBtn" @click="togglePasswordVisibility()">
+              <button
+                type="button"
+                class="passwordToggleBtn"
+                @click="togglePasswordVisibility()"
+              >
                 <vue-feather
                   :type="passwordViewToggle.password ? 'eye-off' : 'eye'"
                   :class="{ 'text-red-600': v$.password.$error }"
@@ -61,11 +70,15 @@
           </div>
 
           <div class="form-group mb-6">
-            <label for="confirmPassword" class="credential__label mb-1"> Confirm password </label>
+            <label for="confirmPassword" class="credential__label mb-1">
+              Confirm password
+            </label>
 
             <div class="credential__passwordWithToggler">
               <input
-                :type="!passwordViewToggle.confirmPassword ? 'password' : 'text'"
+                :type="
+                  !passwordViewToggle.confirmPassword ? 'password' : 'text'
+                "
                 class="credential__input"
                 :class="{ invalid: v$.confirmPassword.$error }"
                 id="confirmPassword"
@@ -88,7 +101,9 @@
             <ErrorMessage :errors="v$.confirmPassword.$errors" />
           </div>
 
-          <div class="signup__formBtnGrp flex flex-wrap md:flex-nowrap md:justify-between gap-3">
+          <div
+            class="signup__formBtnGrp flex flex-wrap md:flex-nowrap md:justify-between gap-3"
+          >
             <button
               type="button"
               class="btn btn__primary-light large rounded px-4 w-full order-1 md:w-auto md:order-0"
@@ -121,7 +136,9 @@
             :disabled="authState.getIsLoading || authState.getIsOAuthLoading"
             @click="loginWithGoogle"
           >
-            <template v-if="!authState.getIsOAuthLoading"> Sign in with Google </template>
+            <template v-if="!authState.getIsOAuthLoading">
+              Sign in with Google
+            </template>
             <vue-feather
               v-if="authState.getIsOAuthLoading"
               type="loader"
@@ -142,7 +159,13 @@ import { useRouter } from "vue-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 import { useVuelidate } from "@vuelidate/core";
-import { required, email, minLength, helpers, sameAs } from "@vuelidate/validators";
+import {
+  required,
+  email,
+  minLength,
+  helpers,
+  sameAs,
+} from "@vuelidate/validators";
 
 import { toast } from "vue3-toastify";
 
@@ -181,11 +204,17 @@ const rules = {
   },
   password: {
     required: helpers.withMessage("Password is required", required),
-    minLength: helpers.withMessage("Password should be at least 6 characters long", minLength(6)),
+    minLength: helpers.withMessage(
+      "Password should be at least 6 characters long",
+      minLength(6)
+    ),
   },
   confirmPassword: {
     required: helpers.withMessage("Confirm password is required", required),
-    sameAsPassword: helpers.withMessage("Both fields must be equal", sameAs(passwordRef)),
+    sameAsPassword: helpers.withMessage(
+      "Both fields must be equal",
+      sameAs(passwordRef)
+    ),
   },
 };
 
