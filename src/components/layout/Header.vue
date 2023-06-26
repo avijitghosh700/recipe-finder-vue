@@ -19,7 +19,7 @@
         <Logo />
 
         <ul class="header__menu flex items-center gap-2 ml-auto">
-          <li>{{ user.displayName || user.email }}</li>
+          <li>{{ user.name || user.email }}</li>
           <li>
             <button class="rounded-full p-3 flex items-center" @click="signOut">
               <vue-feather type="log-out"></vue-feather>
@@ -32,10 +32,11 @@
 </template>
 
 <script setup lang="ts">
-import type { User } from "firebase/auth";
-
 import { logOut } from "@/shared/services/authService";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/authStore";
+
+import type { User } from "@/shared/models/user.mode";
 
 defineProps<{
   user: User;
@@ -43,8 +44,11 @@ defineProps<{
 
 const router = useRouter();
 
+const { setUnauthenticated } = useAuthStore();
+
 const signOut = () => {
   logOut().then(() => {
+    setUnauthenticated();
     router.push("/");
   });
 };

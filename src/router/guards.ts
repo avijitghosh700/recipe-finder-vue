@@ -1,16 +1,14 @@
-import firebaseApp from "@/shared/firebase.config";
+import { useAuthStore } from "@/stores/authStore";
 import { useRouter, type RouteLocationNormalized } from "vue-router";
-
-import { useCurrentUser } from "vuefire";
 
 export const authGuard = (
   to: RouteLocationNormalized,
   from: RouteLocationNormalized
 ) => {
   const router = useRouter();
-  const user = useCurrentUser(firebaseApp.name);
+  const auth = useAuthStore();
 
-  if (user.value) return true;
+  if (auth.getIsAuthenticated) return true;
 
   router.push("/");
   return false;

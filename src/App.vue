@@ -1,14 +1,12 @@
 <template>
-  <Header v-if="user" :user="user" />
+  <Header v-if="auth.getIsAuthenticated" :user="auth.getUser" />
   <router-view></router-view>
 </template>
 
 <style scoped lang="scss"></style>
 
 <script setup lang="ts">
-import { useCurrentUser } from "vuefire";
+import { useAuthStore } from "./stores/authStore";
 
-import firebaseApp from "./shared/firebase.config";
-
-const user = useCurrentUser(firebaseApp.name);
+const auth = useAuthStore();
 </script>

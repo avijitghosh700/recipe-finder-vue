@@ -14,10 +14,7 @@
 <template>
   <main class="main login">
     <section class="login__section grid place-items-center h-full px-3">
-      <form
-        class="login__form credential p-5 rounded border"
-        @submit.prevent="logInWithEmail"
-      >
+      <form class="login__form credential p-5 rounded border" @submit.prevent="logInWithEmail">
         <div class="login__formMain">
           <div class="login__formHeader text-center mb-5">
             <Logo size="xl" :symbolOnly="true" />
@@ -39,9 +36,7 @@
           </div>
 
           <div class="form-group mb-6">
-            <label for="password" class="credential__label mb-1"
-              >Password</label
-            >
+            <label for="password" class="credential__label mb-1"> Password </label>
 
             <div class="credential__passwordWithToggler">
               <input
@@ -53,11 +48,7 @@
                 v-model="v$.password.$model"
               />
 
-              <button
-                type="button"
-                class="passwordToggleBtn"
-                @click="togglePasswordVisibility()"
-              >
+              <button type="button" class="passwordToggleBtn" @click="togglePasswordVisibility()">
                 <vue-feather
                   :type="passwordViewToggle ? 'eye-off' : 'eye'"
                   :class="{ 'text-red-600': v$.password.$error }"
@@ -69,13 +60,11 @@
             <ErrorMessage :errors="v$.password.$errors" />
           </div>
 
-          <div
-            class="login__formBtnGrp flex flex-wrap md:flex-nowrap md:justify-between gap-3"
-          >
+          <div class="login__formBtnGrp flex flex-wrap md:flex-nowrap md:justify-between gap-3">
             <button
               type="button"
               class="btn btn__primary-light large rounded px-4 w-full order-1 md:w-auto md:order-0"
-              :disabled="loading || loadingOAuth"
+              :disabled="authState.getIsLoading || authState.getIsOAuthLoading"
               @click="goToSignup()"
             >
               Create an account
@@ -83,11 +72,11 @@
             <button
               type="submit"
               class="btn btn__primary large rounded px-4 w-full order-0 md:w-auto md:order-1"
-              :disabled="loading || loadingOAuth"
+              :disabled="authState.getIsLoading || authState.getIsOAuthLoading"
             >
-              <template v-if="!loading">Sign In</template>
+              <template v-if="!authState.getIsLoading">Sign In</template>
               <vue-feather
-                v-if="loading"
+                v-if="authState.getIsLoading"
                 type="loader"
                 animation="spin"
                 animation-speed="fast"
@@ -101,12 +90,12 @@
         <div class="login__formOAuth">
           <button
             class="btn btn__primary outlined large rounded px-4 w-full"
-            :disabled="loading || loadingOAuth"
+            :disabled="authState.getIsLoading || authState.getIsOAuthLoading"
             @click="loginWithGoogle"
           >
-            <template v-if="!loadingOAuth"> Sign in with Google </template>
+            <template v-if="!authState.getIsOAuthLoading"> Sign in with Google </template>
             <vue-feather
-              v-if="loadingOAuth"
+              v-if="authState.getIsOAuthLoading"
               type="loader"
               animation="spin"
               animation-speed="fast"
@@ -130,17 +119,19 @@ import { toast } from "vue3-toastify";
 
 import { signIn, signInWithGoogle } from "@/shared/services/authService";
 
+import { useAuthStore } from "@/stores/authStore";
+
 import { errorFormatter } from "@/shared/utils";
 
 import firebaseApp from "@/shared/firebase.config";
 
 const router = useRouter();
 
-const auth = getAuth(firebaseApp);
+const auth = getAuth(firebaseApp) // Destructuring will not work here -_-.;
+
+const authState = useAuthStore();
 
 const passwordViewToggle = ref(false);
-const loading = ref(false);
-const loadingOAuth = ref(false);
 const errorMsg = ref("");
 
 const signInForm = reactive({
@@ -155,10 +146,7 @@ const rules = {
   },
   password: {
     required: helpers.withMessage("Password is required", required),
-    minLength: helpers.withMessage(
-      "Password should be at least 6 characters long",
-      minLength(6)
-    ),
+    minLength: helpers.withMessage("Password should be at least 6 characters long", minLength(6)),
   },
 };
 
@@ -174,44 +162,47 @@ const logInWithEmail = async () => {
 
   if (isInvalid) return;
 
-  loading.value = true;
+  authState.setLoading(true);
 
   try {
     const response = await signIn(signInForm.email, signInForm.password);
     const user = response.user;
 
-    loading.value = false;
+    authState.setAuthenticated();
 
     user && router.push("/dashboard");
   } catch (error: any) {
+    authState.setUnauthenticated();
+
     errorMsg.value = errorFormatter(error.code);
 
     toast(errorMsg.value, { type: "error" });
-
-    loading.value = false;
   }
 };
 
 const loginWithGoogle = async () => {
-  loadingOAuth.value = true;
+  authState.setOAuthLoading(true);
 
   try {
     const response = await signInWithGoogle();
     const user = response.user;
 
-    loadingOAuth.value = false;
+    authState.setAuthenticated();
 
     user && router.push("/dashboard");
   } catch (error: any) {
+    authState.setUnauthenticated();
+
     errorMsg.value = errorFormatter(error.code);
 
     toast(errorMsg.value, { type: "error" });
-
-    loadingOAuth.value = false;
   }
 };
 
 onAuthStateChanged(auth, (user) => {
-  if (user) router.replace("/dashboard");
+  if (user) {
+    authState.addUser(user);
+    router.replace("/dashboard");
+  }
 });
 </script>
