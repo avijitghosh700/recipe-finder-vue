@@ -154,4 +154,30 @@ body {
       }
     }
   }
+
+  &__search {
+    position: relative;
+
+    & > input {
+      padding-right: 40px;
+    }
+
+    & > .searchClearBtn {
+      @apply grid;
+      @apply place-content-center;
+      @apply rounded-full;
+
+      height: 30px;
+      width: 30px;
+      position: absolute;
+      inset: 50% 7px auto auto;
+      transform: translateY(-50%);
+
+      &:hover {
+        @apply bg-slate-100;
+
+        color: $primary;
+      }
+    }
+  }
 }

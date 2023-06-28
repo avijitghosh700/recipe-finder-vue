@@ -32,8 +32,6 @@ app.component("ErrorMessage", ErrorMessage);
 // Store
 const pinia = createPinia();
 
-app.use(pinia);
-
 watch(
   pinia.state,
   (state) => {
@@ -41,6 +39,8 @@ watch(
   },
   { deep: true }
 );
+
+app.use(pinia);
 // END
 
 app.use(router);

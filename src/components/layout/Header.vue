@@ -6,7 +6,7 @@
 
   &__menu {
     & > li {
-      color: $primary;
+      color: $d-gray;
     }
   }
 }
