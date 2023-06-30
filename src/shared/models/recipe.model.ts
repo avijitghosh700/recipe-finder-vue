@@ -10,3 +10,11 @@ export interface Recipe {
   image: string;
   ingredients?: string[];
 }
+
+export interface RecipeState {
+  loading: boolean;
+  loaded: boolean;
+  failed: boolean;
+
+  recipe?: Recipe | null;
+}

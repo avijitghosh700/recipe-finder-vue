@@ -50,9 +50,19 @@
     <section class="dashboard__recipes py-5">
       <div class="container mx-auto">
         <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <div class="cardContainer" v-for="recipe of recipes" :key="recipe.id">
-            <RecipeCard :recipe="recipe"/>
-          </div>
+          <template v-if="recipeState.isLoading">
+            <CardSkeleton v-for="count of skeletonCount" :key="count" />
+          </template>
+
+          <template v-if="recipeState.isLoaded">
+            <div
+              class="cardContainer"
+              v-for="recipe of recipes"
+              :key="recipe.id"
+            >
+              <RecipeCard :recipe="recipe" />
+            </div>
+          </template>
         </div>
       </div>
     </section>
@@ -64,7 +74,11 @@ import { computed, onMounted, reactive, ref } from "vue";
 
 import { useDebounceFn } from "@vueuse/core";
 
+import useRecipeStore from "@/stores/recipeStore";
+
 import { getRecipes, searchRecipes } from "@/shared/services/recipeService";
+
+import type { Recipe, RecipeResponse } from "@/shared/models/recipe.model";
 
 import RecipeCard from "@/components/RecipeCard.vue";
 
@@ -72,10 +86,12 @@ import BG1 from "../../assets/images/dashboard_bg_1.jpg";
 import BG2 from "../../assets/images/dashboard_bg_2.jpg";
 import BG3 from "../../assets/images/dashboard_bg_3.jpg";
 import BG4 from "../../assets/images/dashboard_bg_4.jpg";
-import type { Recipe, RecipeResponse } from "@/shared/models/recipe.model";
 
+const recipeState = useRecipeStore();
+
+const skeletonCount = ref(12);
 const searchValue = ref("");
-const recipes = ref<Recipe[]>([])
+const recipes = ref<Recipe[]>([]);
 
 const searchPlaceholder = reactive({
   base: "Search recipes",
@@ -119,33 +135,49 @@ const handleOnBlur = (event: FocusEvent) => {
   placeholderUpdater(event.type);
 };
 
-const clearSearch = () => (searchValue.value = "");
+const clearSearch = () => {
+  searchValue.value = "";
+
+  fetchRecipes();
+};
+
+const recipeDataFormatter = (data: RecipeResponse) => {
+  if (data && data.results && data.results.length) {
+    recipes.value = data.results.map((recipe) => ({
+      id: recipe.id,
+      name: recipe.name,
+      description: recipe.description,
+      image: recipe.thumbnail_url,
+    }));
+
+    recipeState.recipeLoadingSuccess();
+  }
+};
 
 const fetchRecipes = async () => {
+  recipeState.recipeLoading();
+
   try {
     const res = await getRecipes();
     const data: RecipeResponse = JSON.parse(res.data);
-    
-    if (data && data.results && data.results.length) {
-      recipes.value = data.results.map((recipe) => ({
-        id: recipe.id,
-        name: recipe.name,
-        description: recipe.description,
-        image: recipe.thumbnail_url,
-      }))
-    }
+
+    recipeDataFormatter(data);
   } catch (error) {
+    recipeState.recipeLoadingFailed();
     console.log(error);
   }
 };
 
 const findRecipes = useDebounceFn(async (query: string) => {
+  recipeState.recipeLoading();
+
   try {
     const res = await searchRecipes(query);
-    const recipes = JSON.parse(res.data);
+    const data = JSON.parse(res.data);
 
-    console.log(recipes);
+    recipeDataFormatter(data);
   } catch (error) {
+    recipeState.recipeLoadingFailed();
     console.log(error);
   }
 }, 200);

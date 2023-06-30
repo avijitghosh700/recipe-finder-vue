@@ -12,6 +12,7 @@ import Logo from "@/components/Logo.vue";
 import Avatar from "@/components/Avatar.vue";
 import ErrorMessage from "@/components/ErrorMessage.vue";
 import Header from "@/components/layout/Header.vue";
+import CardSkeleton from "@/components/loaders/CardSkeleton.vue";
 
 import App from "./App.vue";
 import router from "./router";
@@ -27,6 +28,7 @@ app.component("Logo", Logo);
 app.component("Avatar", Avatar);
 app.component("Header", Header);
 app.component("ErrorMessage", ErrorMessage);
+app.component("CardSkeleton", CardSkeleton);
 // END
 
 // Store

@@ -171,7 +171,7 @@ import { toast } from "vue3-toastify";
 
 import { signInWithGoogle, signUp } from "@/shared/services/authService";
 
-import { useAuthStore } from "@/stores/authStore";
+import useAuthStore from "@/stores/authStore";
 
 import { errorFormatter } from "@/shared/utils";
 

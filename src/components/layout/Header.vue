@@ -37,9 +37,11 @@
 </template>
 
 <script setup lang="ts">
-import { logOut } from "@/shared/services/authService";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "@/stores/authStore";
+
+import useAuthStore from "@/stores/authStore";
+
+import { logOut } from "@/shared/services/authService";
 
 import type { User } from "@/shared/models/user.mode";
 
