@@ -47,7 +47,15 @@
       </div>
     </section>
 
-    <section class="dashboard__recipes"></section>
+    <section class="dashboard__recipes py-5">
+      <div class="container mx-auto">
+        <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div class="cardContainer" v-for="recipe of recipes" :key="recipe.id">
+            <RecipeCard :recipe="recipe"/>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 </template>
 
@@ -58,12 +66,16 @@ import { useDebounceFn } from "@vueuse/core";
 
 import { getRecipes, searchRecipes } from "@/shared/services/recipeService";
 
+import RecipeCard from "@/components/RecipeCard.vue";
+
 import BG1 from "../../assets/images/dashboard_bg_1.jpg";
 import BG2 from "../../assets/images/dashboard_bg_2.jpg";
 import BG3 from "../../assets/images/dashboard_bg_3.jpg";
 import BG4 from "../../assets/images/dashboard_bg_4.jpg";
+import type { Recipe, RecipeResponse } from "@/shared/models/recipe.model";
 
 const searchValue = ref("");
+const recipes = ref<Recipe[]>([])
 
 const searchPlaceholder = reactive({
   base: "Search recipes",
@@ -109,12 +121,19 @@ const handleOnBlur = (event: FocusEvent) => {
 
 const clearSearch = () => (searchValue.value = "");
 
-const recipes = async () => {
+const fetchRecipes = async () => {
   try {
     const res = await getRecipes();
-    const recipes = JSON.parse(res.data);
-
-    console.log(recipes);
+    const data: RecipeResponse = JSON.parse(res.data);
+    
+    if (data && data.results && data.results.length) {
+      recipes.value = data.results.map((recipe) => ({
+        id: recipe.id,
+        name: recipe.name,
+        description: recipe.description,
+        image: recipe.thumbnail_url,
+      }))
+    }
   } catch (error) {
     console.log(error);
   }
@@ -132,6 +151,6 @@ const findRecipes = useDebounceFn(async (query: string) => {
 }, 200);
 
 onMounted(() => {
-  // recipes();
+  fetchRecipes();
 });
 </script>
