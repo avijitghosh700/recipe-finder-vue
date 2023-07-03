@@ -64,6 +64,10 @@
             </div>
           </template>
         </div>
+
+        <div class="text-center">
+          <NotFoundIcon message="No recipes found" v-if="!recipes.length" />
+        </div>
       </div>
     </section>
   </main>
@@ -150,6 +154,9 @@ const recipeDataFormatter = (data: RecipeResponse) => {
       image: recipe.thumbnail_url,
     }));
 
+    recipeState.recipeLoadingSuccess();
+  } else {
+    recipes.value = [];
     recipeState.recipeLoadingSuccess();
   }
 };

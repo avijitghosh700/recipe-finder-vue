@@ -13,6 +13,7 @@ import Avatar from "@/components/Avatar.vue";
 import ErrorMessage from "@/components/ErrorMessage.vue";
 import Header from "@/components/layout/Header.vue";
 import CardSkeleton from "@/components/loaders/CardSkeleton.vue";
+import NotFoundIcon from "@/components/NotFound.vue";
 
 import App from "./App.vue";
 import router from "./router";
@@ -29,6 +30,7 @@ app.component("Avatar", Avatar);
 app.component("Header", Header);
 app.component("ErrorMessage", ErrorMessage);
 app.component("CardSkeleton", CardSkeleton);
+app.component("NotFoundIcon", NotFoundIcon);
 // END
 
 // Store
