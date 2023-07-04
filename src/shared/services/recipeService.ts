@@ -23,3 +23,15 @@ export const searchRecipes = (query: string, limit = 20) => {
 
   return Api.get("/recipes/list", options);
 };
+
+export const getMoreRecipes = (from: number, query?: string, limit = 20) => {
+  const options: AxiosRequestConfig = {
+    params: {
+      from,
+      size: limit,
+      q: query,
+    },
+  };
+
+  return Api.get("/recipes/list", options);
+};

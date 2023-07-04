@@ -63,10 +63,31 @@
               <RecipeCard :recipe="recipe" />
             </div>
           </template>
+
+          <template v-if="recipeState.isLoadMoreActive">
+            <CardSkeleton v-for="count of skeletonCount" :key="count" />
+          </template>
+        </div>
+
+        <div
+          class="flex items-center mt-4"
+          v-if="recipeState.isLoaded && recipes.length"
+        >
+          <button
+            type="button"
+            class="btn btn__secondary outlined rounded-full px-4 mx-auto"
+            :disabled="recipeState.isLoadMoreActive"
+            @click="loadMoreRecipes"
+          >
+            Load more
+          </button>
         </div>
 
         <div class="text-center">
-          <NotFoundIcon message="No recipes found" v-if="!recipes.length" />
+          <NotFoundIcon
+            message="No recipes found"
+            v-if="recipeState.isLoaded && !recipes.length"
+          />
         </div>
       </div>
     </section>
@@ -76,11 +97,15 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from "vue";
 
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, useThrottleFn } from "@vueuse/core";
 
 import useRecipeStore from "@/stores/recipeStore";
 
-import { getRecipes, searchRecipes } from "@/shared/services/recipeService";
+import {
+  getRecipes,
+  getMoreRecipes,
+  searchRecipes,
+} from "@/shared/services/recipeService";
 
 import type { Recipe, RecipeResponse } from "@/shared/models/recipe.model";
 
@@ -90,6 +115,7 @@ import BG1 from "../../assets/images/dashboard_bg_1.jpg";
 import BG2 from "../../assets/images/dashboard_bg_2.jpg";
 import BG3 from "../../assets/images/dashboard_bg_3.jpg";
 import BG4 from "../../assets/images/dashboard_bg_4.jpg";
+import { toast } from "vue3-toastify";
 
 const recipeState = useRecipeStore();
 
@@ -145,20 +171,17 @@ const clearSearch = () => {
   fetchRecipes();
 };
 
-const recipeDataFormatter = (data: RecipeResponse) => {
+const recipeDataFormatter = (data: RecipeResponse): Recipe[] => {
   if (data && data.results && data.results.length) {
-    recipes.value = data.results.map((recipe) => ({
+    return data.results.map((recipe) => ({
       id: recipe.id,
       name: recipe.name,
       description: recipe.description,
       image: recipe.thumbnail_url,
     }));
-
-    recipeState.recipeLoadingSuccess();
-  } else {
-    recipes.value = [];
-    recipeState.recipeLoadingSuccess();
   }
+
+  return [];
 };
 
 const fetchRecipes = async () => {
@@ -168,7 +191,9 @@ const fetchRecipes = async () => {
     const res = await getRecipes();
     const data: RecipeResponse = JSON.parse(res.data);
 
-    recipeDataFormatter(data);
+    recipes.value = recipeDataFormatter(data);
+
+    recipeState.recipeLoadingSuccess();
   } catch (error) {
     recipeState.recipeLoadingFailed();
     console.log(error);
@@ -182,12 +207,35 @@ const findRecipes = useDebounceFn(async (query: string) => {
     const res = await searchRecipes(query);
     const data = JSON.parse(res.data);
 
-    recipeDataFormatter(data);
+    recipes.value = recipeDataFormatter(data);
+
+    recipeState.recipeLoadingSuccess();
   } catch (error) {
     recipeState.recipeLoadingFailed();
     console.log(error);
   }
 }, 200);
+
+const loadMoreRecipes = useThrottleFn(async () => {
+  recipeState.recipeLoadMoreActive();
+
+  try {
+    const from = recipes.value.length + 1;
+
+    const res = await getMoreRecipes(from, searchValue.value);
+    const data: RecipeResponse = JSON.parse(res.data);
+
+    recipes.value = [...recipes.value, ...recipeDataFormatter(data)];
+
+    recipeState.recipeLoadMoreInactive();
+  } catch (error) {
+    recipeState.recipeLoadMoreInactive();
+
+    toast("Something went wrong", { type: "error" });
+
+    console.log(error);
+  }
+}, 300);
 
 onMounted(() => {
   fetchRecipes();

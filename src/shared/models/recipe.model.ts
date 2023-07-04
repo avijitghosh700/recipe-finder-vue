@@ -16,5 +16,7 @@ export interface RecipeState {
   loaded: boolean;
   failed: boolean;
 
+  loadMoreActive: boolean;
+
   recipe?: Recipe | null;
 }

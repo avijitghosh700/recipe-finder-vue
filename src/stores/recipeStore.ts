@@ -8,6 +8,9 @@ const useRecipeStore = defineStore("Recipe", {
       loading: false,
       loaded: false,
       failed: false,
+
+      loadMoreActive: false,
+
       recipe: null,
     };
 
@@ -31,6 +34,13 @@ const useRecipeStore = defineStore("Recipe", {
       this.loaded = false;
     },
 
+    recipeLoadMoreActive() {
+      this.loadMoreActive = true;
+    },
+    recipeLoadMoreInactive() {
+      this.loadMoreActive = false;
+    },
+
     setRecipe(recipe: Recipe) {
       this.recipe = recipe;
     },
@@ -40,7 +50,8 @@ const useRecipeStore = defineStore("Recipe", {
     isLoading: (state) => state.loading,
     isLoaded: (state) => state.loaded,
     isFailed: (state) => state.failed,
-    recipe: (state) => state.recipe,
+    isLoadMoreActive: (state) => state.loadMoreActive,
+    currentRecipe: (state) => state.recipe,
   },
 });
 

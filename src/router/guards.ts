@@ -1,5 +1,5 @@
-import useAuthStore from "@/stores/authStore";
 import { useRouter, type RouteLocationNormalized } from "vue-router";
+import useAuthStore from "@/stores/authStore";
 
 export const authGuard = (
   to: RouteLocationNormalized,
