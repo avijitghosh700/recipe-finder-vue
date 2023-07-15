@@ -214,7 +214,7 @@ const findRecipes = useDebounceFn(async (query: string) => {
     recipeState.recipeLoadingFailed();
     console.log(error);
   }
-}, 200);
+}, 500);
 
 const loadMoreRecipes = useThrottleFn(async () => {
   recipeState.recipeLoadMoreActive();
