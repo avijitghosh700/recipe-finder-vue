@@ -14,7 +14,7 @@
 
 <template>
   <div class="header border-b">
-    <div class="container mx-auto">
+    <div class="container mx-auto px-4">
       <nav class="header__nav flex items-center">
         <Logo />
 
