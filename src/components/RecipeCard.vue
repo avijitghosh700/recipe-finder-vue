@@ -17,11 +17,12 @@
         :src="recipe.image"
         :alt="recipe.name"
         class="h-full w-full object-cover"
+        loading="lazy"
       />
     </div>
 
     <figcaption class="recipeCard__caption p-4 border-t">
-      <h3 class="headerCard__heading text-md mb-1">{{ recipe.name }}</h3>
+      <h3 class="headerCard__heading line-clamp-2 text-md mb-1" :title="recipe.name">{{ recipe.name }}</h3>
 
       <p class="recipeCard__description text-xs font-light line-clamp-4">
         {{ recipe.description }}

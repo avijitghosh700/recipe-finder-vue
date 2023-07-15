@@ -49,7 +49,7 @@
 
     <section class="dashboard__recipes py-5">
       <div class="container mx-auto px-4">
-        <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <template v-if="recipeState.isLoading">
             <CardSkeleton v-for="count of skeletonCount" :key="count" />
           </template>
