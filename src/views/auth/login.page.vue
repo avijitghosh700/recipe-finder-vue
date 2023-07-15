@@ -14,10 +14,7 @@
 <template>
   <main class="main login">
     <section class="login__section grid place-items-center h-full px-3">
-      <form
-        class="login__form credential p-5 rounded border"
-        @submit.prevent="logInWithEmail"
-      >
+      <form class="login__form credential p-5 rounded border" @submit.prevent="logInWithEmail">
         <div class="login__formMain">
           <div class="login__formHeader text-center mb-5">
             <Logo size="xl" :symbolOnly="true" />
@@ -39,9 +36,7 @@
           </div>
 
           <div class="form-group mb-6">
-            <label for="password" class="credential__label mb-1">
-              Password
-            </label>
+            <label for="password" class="credential__label mb-1"> Password </label>
 
             <div class="credential__passwordWithToggler">
               <input
@@ -53,11 +48,7 @@
                 v-model="v$.password.$model"
               />
 
-              <button
-                type="button"
-                class="passwordToggleBtn"
-                @click="togglePasswordVisibility()"
-              >
+              <button type="button" class="passwordToggleBtn" @click="togglePasswordVisibility()">
                 <vue-feather
                   :type="passwordViewToggle ? 'eye-off' : 'eye'"
                   :class="{ 'text-red-600': v$.password.$error }"
@@ -69,9 +60,7 @@
             <ErrorMessage :errors="v$.password.$errors" />
           </div>
 
-          <div
-            class="login__formBtnGrp flex flex-wrap md:flex-nowrap md:justify-between gap-3"
-          >
+          <div class="login__formBtnGrp flex flex-wrap md:flex-nowrap md:justify-between gap-3">
             <button
               type="button"
               class="btn btn__primary-light large rounded px-4 w-full order-1 md:w-auto md:order-0"
@@ -104,9 +93,7 @@
             :disabled="authState.getIsLoading || authState.getIsOAuthLoading"
             @click="loginWithGoogle"
           >
-            <template v-if="!authState.getIsOAuthLoading">
-              Sign in with Google
-            </template>
+            <template v-if="!authState.getIsOAuthLoading"> Sign in with Google </template>
             <vue-feather
               v-if="authState.getIsOAuthLoading"
               type="loader"
@@ -159,10 +146,7 @@ const rules = {
   },
   password: {
     required: helpers.withMessage("Password is required", required),
-    minLength: helpers.withMessage(
-      "Password should be at least 6 characters long",
-      minLength(6)
-    ),
+    minLength: helpers.withMessage("Password should be at least 6 characters long", minLength(6)),
   },
 };
 
